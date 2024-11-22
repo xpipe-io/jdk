@@ -109,6 +109,26 @@ bool AppLauncher::libEnvVariableContainsAppDir() const {
     );
 }
 
+#ifdef _WIN32
+LONG GetDWORDRegKey(HKEY hKey, const std::wstring &strValueName, DWORD &nValue, DWORD nDefaultValue)
+{
+    nValue = nDefaultValue;
+    DWORD dwBufferSize(sizeof(DWORD));
+    DWORD nResult(0);
+    LONG nError = ::RegQueryValueExW(hKey,
+        strValueName.c_str(),
+        0,
+        NULL,
+        reinterpret_cast<LPBYTE>(&nResult),
+        &dwBufferSize);
+    if (ERROR_SUCCESS == nError)
+    {
+        nValue = nResult;
+    }
+    return nError;
+}
+#endif
+
 Jvm* AppLauncher::createJvmLauncher() const {
     const tstring cfgFilePath = getCfgFilePath();
 
@@ -151,9 +171,22 @@ Jvm* AppLauncher::createJvmLauncher() const {
         (*jvm).initFromConfigFile(cfgFile);
     }
 
+#ifdef _WIN32
+    (*jvm)
+        .addEnvVariable(_T("_JAVA_OPTIONS"), _T(""))
+        .addEnvVariable(_T("JAVA_TOOL_OPTIONS"), _T(""));
+
+    HKEY hKey;
+    RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ, &hKey);
+    DWORD ver;
+    GetDWORDRegKey(hKey, L"CurrentBuildNumber", ver, 0);
+    if (ver > 17134) {
+        (*jvm).addArgument(_T("-XX:+UseZGC"));
+    }
+#endif
+
     return jvm.release();
 }
-
 
 void AppLauncher::launch() const {
     std::unique_ptr<Jvm>(createJvmLauncher())->launch();
