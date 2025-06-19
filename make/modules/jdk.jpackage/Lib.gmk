@@ -67,7 +67,7 @@ $(eval $(call SetupJdkExecutable, BUILD_JPACKAGEAPPLAUNCHER, \
     LDFLAGS_macosx := -rpath @executable_path/../Frameworks/ \
         -rpath @executable_path/../PlugIns/, \
     LIBS_macosx := -framework Cocoa, \
-    LIBS_windows := msi.lib ole32.lib shell32.lib shlwapi.lib user32.lib, \
+    LIBS_windows := msi.lib ole32.lib shell32.lib shlwapi.lib user32.lib Advapi32.lib, \
     LIBS_linux := $(LIBDL), \
     MANIFEST := $(JAVA_MANIFEST), \
     MANIFEST_VERSION := $(VERSION_NUMBER_FOUR_POSITIONS) \
