@@ -179,7 +179,7 @@ ifeq ($(call isTargetOs, windows), true)
       CFLAGS_windows := -MT $(JPACKAGE_CFLAGS_windows), \
       CXXFLAGS_windows := -MT $(JPACKAGE_CXXFLAGS_windows), \
       LD_SET_ORIGIN := false, \
-      LIBS_windows := msi.lib ole32.lib shell32.lib shlwapi.lib user32.lib, \
+      LIBS_windows := msi.lib ole32.lib shell32.lib shlwapi.lib user32.lib Advapi32.lib, \
       MANIFEST := $(JAVA_MANIFEST), \
       MANIFEST_VERSION := $(VERSION_NUMBER_FOUR_POSITIONS) \
   ))
