@@ -126,7 +126,7 @@ LONG GetDWORDRegKey(HKEY hKey, const std::wstring &strValueName, DWORD &nValue, 
     {
         nValue = nResult;
     }
-    return nError;
+    return 0;
 }
 #endif
 
@@ -177,8 +177,9 @@ Jvm* AppLauncher::createJvmLauncher() const {
     RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", 0, KEY_READ, &hKey);
     DWORD ver;
     GetDWORDRegKey(hKey, L"CurrentBuildNumber", ver, 0);
-    if (ver > 17134) {
-        (*jvm).addArgument(_T("-XX:+UseZGC"));
+    if (ver <= 19043) {
+        (*jvm).addArgument(_T("-XX:-UseG1GC"));
+        (*jvm).addArgument(_T("-XX:+UseSerialGC"));
     }
 #endif
 
