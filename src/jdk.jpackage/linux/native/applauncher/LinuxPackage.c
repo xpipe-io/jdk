@@ -305,32 +305,11 @@ char* getJvmLauncherLibPath(void) {
         goto cleanup;
     }
 
-    pkg = findOwnerOfFile(modulePath);
-    if (!pkg) {
-        /* Not a package install */
-        /* Launcher should be in "bin" subdirectory of app image. */
-        /* Launcher lib should be in "lib" subdirectory of app image. */
-        appImageDir = dirname(dirname(modulePath));
-        launcherLibPath = concat(appImageDir, "/lib" LAUNCHER_LIB_NAME);
-    } else {
-        if (PACKAGE_TYPE_RPM == pkg->type) {
-            pkgQueryCmd = "rpm -ql '%s' 2>/dev/null";
-        } else if (PACKAGE_TYPE_DEB == pkg->type) {
-            pkgQueryCmd = "dpkg -L '%s' 2>/dev/null";
-        } else {
-            /* Should never happen */
-            JP_LOG_ERRMSG("Internal error");
-            goto cleanup;
-        }
-
-        popenStatus = popenCommand(pkgQueryCmd, pkg->name, findLauncherLib,
-                                                        &launcherLibPath);
-        if (popenStatus) {
-            free(launcherLibPath);
-            launcherLibPath = NULL;
-            goto cleanup;
-        }
-    }
+    /* Not a package install */
+    /* Launcher should be in "bin" subdirectory of app image. */
+    /* Launcher lib should be in "lib" subdirectory of app image. */
+    appImageDir = dirname(dirname(modulePath));
+    launcherLibPath = concat(appImageDir, "/lib" LAUNCHER_LIB_NAME);
 
 cleanup:
     free(modulePath);
