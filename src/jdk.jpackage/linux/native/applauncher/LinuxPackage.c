@@ -256,49 +256,11 @@ static int findLauncherLib(void* launcherLibPath, const char* str) {
     return POPEN_CALLBACK_USE;
 }
 
-
-static PackageDesc* findOwnerOfFile(const char* path) {
-    int popenStatus = -1;
-    PackageDesc* pkg = 0;
-
-    pkg = createPackageDesc();
-    if (!pkg) {
-        return 0;
-    }
-
-    popenStatus = popenCommand(
-            "rpm --queryformat '%{NAME}' -qf '%s' 2>/dev/null", path,
-            initRpmPackage, pkg);
-    if (popenStatus) {
-        pkg->type = PACKAGE_TYPE_UNKNOWN;
-        popenStatus = popenCommand("dpkg -S '%s' 2>/dev/null", path,
-                                                        initDebPackage, pkg);
-    }
-
-    if (popenStatus) {
-        pkg->type = PACKAGE_TYPE_UNKNOWN;
-    }
-
-    if (PACKAGE_TYPE_UNKNOWN == pkg->type || !pkg->name) {
-        freePackageDesc(pkg);
-        pkg = 0;
-    }
-
-    if (pkg) {
-        JP_LOG_TRACE("owner pkg: (%s|%d)", pkg->name, pkg->type);
-    }
-
-    return pkg;
-}
-
-
 char* getJvmLauncherLibPath(void) {
     char* modulePath = 0;
     char* appImageDir = 0;
     char* launcherLibPath = 0;
     const char* pkgQueryCmd = 0;
-    int popenStatus = -1;
-    PackageDesc* pkg = 0;
 
     modulePath = getModulePath();
     if (!modulePath) {
@@ -313,7 +275,6 @@ char* getJvmLauncherLibPath(void) {
 
 cleanup:
     free(modulePath);
-    freePackageDesc(pkg);
 
     return launcherLibPath;
 }
