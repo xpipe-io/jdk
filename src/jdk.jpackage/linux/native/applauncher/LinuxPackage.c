@@ -220,47 +220,12 @@ static char* concat(const char *x, const char *y) {
 }
 
 
-static int initRpmPackage(void* desc, const char* str) {
-    initPackageDesc((PackageDesc*)desc, str, PACKAGE_TYPE_RPM);
-    return POPEN_CALLBACK_IGNORE;
-}
-
-
-static int initDebPackage(void* desc, const char* str) {
-    char* colonChrPos = strchr(str, ':');
-    if (colonChrPos) {
-        *colonChrPos = 0;
-    }
-    initPackageDesc((PackageDesc*)desc, str, PACKAGE_TYPE_DEB);
-    return POPEN_CALLBACK_IGNORE;
-}
-
-
 #define LAUNCHER_LIB_NAME "/libapplauncher.so"
-
-static int findLauncherLib(void* launcherLibPath, const char* str) {
-    char* buf = 0;
-    const size_t strLen = strlen(str);
-    const size_t launcherLibNameLen = strlen(LAUNCHER_LIB_NAME);
-
-    if (launcherLibNameLen <= strLen
-            && !strcmp(str + strLen - launcherLibNameLen, LAUNCHER_LIB_NAME)) {
-        buf = strdup(str);
-        if (!buf) {
-            JP_LOG_ERRNO;
-        } else {
-            *(char**)launcherLibPath = buf;
-        }
-        return POPEN_CALLBACK_IGNORE;
-    }
-    return POPEN_CALLBACK_USE;
-}
 
 char* getJvmLauncherLibPath(void) {
     char* modulePath = 0;
     char* appImageDir = 0;
     char* launcherLibPath = 0;
-    const char* pkgQueryCmd = 0;
 
     modulePath = getModulePath();
     if (!modulePath) {
