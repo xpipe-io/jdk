@@ -59,43 +59,7 @@ private:
     std::string value;
 };
 
-
-std::string findOwnerOfFile(const std::nothrow_t&, const std::string& cmdline,
-        const std::string& path) {
-    try {
-        FirstLineConsumer consumer;
-        int exitCode = executeCommandLineAndReadStdout(
-                cmdline + " \'" + path + "\' 2>/dev/null", consumer);
-        if (exitCode == 0) {
-            return consumer.getValue();
-        }
-    } catch (...) {
-    }
-    return "";
-}
-
 } // namespace
-
-Package Package::findOwnerOfFile(const std::string& path) {
-    Package result;
-    result.theName = ::findOwnerOfFile(std::nothrow,
-            "rpm --queryformat '%{NAME}' -qf", path);
-    if (!result.theName.empty()) {
-        result.type = RPM;
-    } else {
-        tstring_array components = tstrings::split(::findOwnerOfFile(
-                std::nothrow, "dpkg -S", path), ":");
-        if (!components.empty()) {
-            result.theName = components.front();
-            if (!result.theName.empty()) {
-                result.type = DEB;
-            }
-        }
-    }
-
-    return result;
-}
-
 
 namespace {
 class AppLauncherInitializer : public CommandOutputConsumer {
