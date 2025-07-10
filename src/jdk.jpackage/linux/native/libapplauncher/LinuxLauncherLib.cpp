@@ -49,39 +49,21 @@ Jvm* jvmLauncher;
 void launchApp() {
     const tstring launcherPath = SysInfo::getProcessModulePath();
 
-    const Package ownerPackage = Package::findOwnerOfFile(launcherPath);
-
     AppLauncher appLauncher;
     appLauncher.addJvmLibName(_T("lib/libjli.so"));
     // add backup - older version such as JDK11 have it in jli sub-dir
     appLauncher.addJvmLibName(_T("lib/jli/libjli.so"));
 
-    if (ownerPackage.name().empty()) {
-        // Launcher should be in "bin" subdirectory of app image.
-        const tstring appImageRoot = FileUtils::dirname(
-                FileUtils::dirname(launcherPath));
+    // Launcher should be in "bin" subdirectory of app image.
+    const tstring appImageRoot = FileUtils::dirname(
+            FileUtils::dirname(launcherPath));
 
-        appLauncher
-            .setImageRoot(appImageRoot)
-            .setAppDir(FileUtils::mkpath() << appImageRoot << _T("lib/app"))
-            .setLibEnvVariableName(_T("LD_LIBRARY_PATH"))
-            .setDefaultRuntimePath(FileUtils::mkpath() << appImageRoot
-                    << _T("lib/runtime"));
-    } else {
-        ownerPackage.initAppLauncher(appLauncher);
-
-        tstring homeDir;
-        JP_TRY;
-        homeDir = SysInfo::getEnvVariable("HOME");
-        JP_CATCH_ALL;
-
-        if (!homeDir.empty()) {
-            appLauncher.addCfgFileLookupDir(FileUtils::mkpath()
-                    << homeDir << ".local" << ownerPackage.name());
-            appLauncher.addCfgFileLookupDir(FileUtils::mkpath()
-                    << homeDir << "." + ownerPackage.name());
-        }
-    }
+    appLauncher
+        .setImageRoot(appImageRoot)
+        .setAppDir(FileUtils::mkpath() << appImageRoot << _T("lib/app"))
+        .setLibEnvVariableName(_T("LD_LIBRARY_PATH"))
+        .setDefaultRuntimePath(FileUtils::mkpath() << appImageRoot
+                << _T("lib/runtime"));
 
     const std::string _JPACKAGE_LAUNCHER = "_JPACKAGE_LAUNCHER";
 
