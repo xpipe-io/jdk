@@ -125,7 +125,8 @@ namespace app {
 int wlaunch(const std::nothrow_t&, LauncherFunc func) {
     std::unique_ptr<Console> console;
     JP_TRY;
-    if (app::isWithLogging()) {
+    // Allocate console!
+    if (true) {
         console = std::unique_ptr<Console>(new Console());
     }
     JP_CATCH_ALL;
