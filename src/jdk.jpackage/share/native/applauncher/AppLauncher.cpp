@@ -148,10 +148,6 @@ Jvm* AppLauncher::createJvmLauncher() const {
         (*jvm).initFromConfigFile(cfgFile);
     }
 
-    (*jvm)
-        .addEnvVariable(_T("_JAVA_OPTIONS"), _T(""))
-        .addEnvVariable(_T("JAVA_TOOL_OPTIONS"), _T(""));
-
     return jvm.release();
 }
 
