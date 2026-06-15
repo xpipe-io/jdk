@@ -43,8 +43,6 @@ public:
 
     void initAppLauncher(AppLauncher& appLauncher) const;
 
-    static Package findOwnerOfFile(const std::string& path);
-
 private:
     enum Type { Unknown, RPM, DEB };
 

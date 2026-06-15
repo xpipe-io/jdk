@@ -56,11 +56,7 @@ class Console {
 public:
     Console() {
         if (!AttachConsole(ATTACH_PARENT_PROCESS)) {
-            // Failed to connect to parent's console. Create our own.
-            if (!AllocConsole()) {
-                // We already have a console, no need to redirect std I/O.
-                return;
-            }
+            return;
         }
 
         stdoutChannel = std::unique_ptr<Channel>(new Channel(stdout));
@@ -125,7 +121,8 @@ namespace app {
 int wlaunch(const std::nothrow_t&, LauncherFunc func) {
     std::unique_ptr<Console> console;
     JP_TRY;
-    if (app::isWithLogging()) {
+    // Allocate console!
+    if (true) {
         console = std::unique_ptr<Console>(new Console());
     }
     JP_CATCH_ALL;
