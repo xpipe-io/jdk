@@ -271,7 +271,7 @@ void launchApp() {
     ::AllowSetForegroundWindow(ASFW_ANY);
 
     const tstring launcherPath = SysInfo::getProcessModulePath();
-    const tstring appImageRoot = FileUtils::dirname(launcherPath);
+    const tstring appImageRoot = FileUtils::dirname(FileUtils::dirname(launcherPath));
     const tstring appDirPath = FileUtils::mkpath() << appImageRoot << _T("app");
 
     const PackageFile pkgFile = PackageFile::loadFromAppDir(appDirPath);
